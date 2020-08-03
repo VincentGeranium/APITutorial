@@ -11,4 +11,6 @@
 
 [POST 방식으로 Echo API 호출 프로젝트](https://github.com/VincentGeranium/APITutorial/tree/master/Chapter08_POST)
 
+[JSON 방식으로 Echo JSON API 호출 프로젝트](https://github.com/VincentGeranium/APITutorial/tree/master/Chapter08_JSON)
+
 - - -
