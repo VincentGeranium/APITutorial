@@ -34,6 +34,18 @@ class ViewController: UIViewController {
         userName.textAlignment = NSTextAlignment.left
         return userName
     }()
+    
+    private let postAlamofireButton: UIButton = {
+        let postButton: UIButton = UIButton()
+        postButton.setTitle("POST_Alamofire", for: .normal)
+        postButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        postButton.setTitleColor(UIColor.white, for: UIControl.State.normal)
+        postButton.backgroundColor = UIColor.systemBlue
+        postButton.layer.cornerRadius = 8.0
+        postButton.layer.borderWidth = 1.0
+        postButton.layer.borderColor = UIColor.white.cgColor
+        return postButton
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +57,7 @@ class ViewController: UIViewController {
     private func setUpAutolayoutAndAddSubViews() {
         setUpUserIdTextField()
         setUpUserNameTextField()
+        setUpPostAlamofireButton()
     }
     
     private func setUpUserIdTextField() {
@@ -75,6 +88,29 @@ class ViewController: UIViewController {
             userNameTextField.widthAnchor.constraint(equalTo: userIdTextField.widthAnchor),
             userNameTextField.heightAnchor.constraint(equalTo: userIdTextField.heightAnchor),
         ])
+    }
+    
+    private func setUpPostAlamofireButton() {
+        let guide = self.view.safeAreaLayoutGuide
+        
+        postAlamofireButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.view.addSubview(postAlamofireButton)
+        
+        NSLayoutConstraint.activate([
+            postAlamofireButton.topAnchor.constraint(equalTo: userNameTextField.bottomAnchor, constant: 30),
+            postAlamofireButton.centerXAnchor.constraint(equalTo: guide.centerXAnchor),
+            postAlamofireButton.widthAnchor.constraint(equalToConstant: 150),
+            postAlamofireButton.heightAnchor.constraint(equalToConstant: 30 * 1.5),
+//            postAlamofireButton.widthAnchor.constraint(lessThanOrEqualTo: userIdTextField.widthAnchor, multiplier: 2/1),
+//            postAlamofireButton.heightAnchor.constraint(greaterThanOrEqualTo: userIdTextField.heightAnchor, multiplier: 1.5),
+        ])
+        
+        postAlamofireButton.addTarget(self, action: #selector(postButtonAction(_:)), for: UIControl.Event.touchUpInside)
+    }
+    
+    @objc private func postButtonAction(_ sender: UIButton) {
+        print("동작")
     }
 
 
