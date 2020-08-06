@@ -46,6 +46,13 @@ class ViewController: UIViewController {
         postButton.layer.borderColor = UIColor.white.cgColor
         return postButton
     }()
+    
+    private let resultTextField: UITextField = {
+        let resultTxtField: UITextField = UITextField()
+        resultTxtField.layer.borderWidth = 1.0
+        resultTxtField.layer.borderColor = UIColor.systemGray.cgColor
+        return resultTxtField
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +65,7 @@ class ViewController: UIViewController {
         setUpUserIdTextField()
         setUpUserNameTextField()
         setUpPostAlamofireButton()
+        setUpResultTextField()
     }
     
     private func setUpUserIdTextField() {
@@ -100,19 +108,45 @@ class ViewController: UIViewController {
         NSLayoutConstraint.activate([
             postAlamofireButton.topAnchor.constraint(equalTo: userNameTextField.bottomAnchor, constant: 30),
             postAlamofireButton.centerXAnchor.constraint(equalTo: guide.centerXAnchor),
-            postAlamofireButton.widthAnchor.constraint(equalToConstant: 150),
+            postAlamofireButton.widthAnchor.constraint(equalToConstant: 170),
             postAlamofireButton.heightAnchor.constraint(equalToConstant: 30 * 1.5),
-//            postAlamofireButton.widthAnchor.constraint(lessThanOrEqualTo: userIdTextField.widthAnchor, multiplier: 2/1),
-//            postAlamofireButton.heightAnchor.constraint(greaterThanOrEqualTo: userIdTextField.heightAnchor, multiplier: 1.5),
         ])
         
         postAlamofireButton.addTarget(self, action: #selector(postButtonAction(_:)), for: UIControl.Event.touchUpInside)
     }
     
     @objc private func postButtonAction(_ sender: UIButton) {
-        print("동작")
+        // 1. 전송할 값 준비
+        let userId = self.userIdTextField.text ?? "아이디 값이 없음"
+        let name = self.userNameTextField.text ?? "이름 값이 없음"
+        let param = [
+            "userId" : userId,
+            "userName" : name
+        ]
+        
+        // 2. Alamofire.requset 객체 생성
+        let alamo = AF.request("http://swiftapi.rubypaper.co.kr:2029/practice/echoJSON", method: HTTPMethod.post, parameters: param, encoding: JSONEncoding.default)
+        
+        // 3. 응답 처리
+        alamo.responseJSON { (response) in
+            
+        }
+        
     }
-
-
+    
+    private func setUpResultTextField() {
+        let guide = self.view.safeAreaLayoutGuide
+        
+        resultTextField.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.view.addSubview(resultTextField)
+        
+        NSLayoutConstraint.activate([
+            resultTextField.topAnchor.constraint(equalTo: postAlamofireButton.bottomAnchor, constant: 30),
+            resultTextField.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 50),
+            resultTextField.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -50),
+            resultTextField.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -100)
+        ])
+    }
 }
 
