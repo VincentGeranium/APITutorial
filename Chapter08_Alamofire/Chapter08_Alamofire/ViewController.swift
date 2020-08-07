@@ -13,11 +13,11 @@ class ViewController: UIViewController {
     
     private let userIdTextField: UITextField = {
         let userId: UITextField = UITextField()
-        userId.borderStyle = UITextField.BorderStyle.none
+//        userId.borderStyle = UITextField.BorderStyle.roundedRect
         userId.layer.cornerRadius = 8.0
         userId.layer.borderWidth = 1.0
         userId.layer.borderColor = UIColor.systemGray.cgColor
-        userId.sizeToFit()
+//        userId.sizeToFit()
         userId.placeholder = "User ID"
         userId.textAlignment = NSTextAlignment.left
         return userId
@@ -25,11 +25,11 @@ class ViewController: UIViewController {
     
     private let userNameTextField: UITextField = {
         let userName: UITextField = UITextField()
-        userName.borderStyle = UITextField.BorderStyle.none
+//        userName.borderStyle = UITextField.BorderStyle.roundedRect
         userName.layer.cornerRadius = 8.0
         userName.layer.borderWidth = 1.0
         userName.layer.borderColor = UIColor.systemGray.cgColor
-        userName.sizeToFit()
+//        userName.sizeToFit()
         userName.placeholder = "User Name"
         userName.textAlignment = NSTextAlignment.left
         return userName
@@ -47,8 +47,8 @@ class ViewController: UIViewController {
         return postButton
     }()
     
-    private let resultTextField: UITextField = {
-        let resultTxtField: UITextField = UITextField()
+    private let resultTextView: UITextView = {
+        let resultTxtField: UITextView = UITextView()
         resultTxtField.layer.borderWidth = 1.0
         resultTxtField.layer.borderColor = UIColor.systemGray.cgColor
         return resultTxtField
@@ -124,12 +124,42 @@ class ViewController: UIViewController {
             "userName" : name
         ]
         
+        let header: HTTPHeaders = [
+            "Content-Type" : "application/json"
+        ]
+        
         // 2. Alamofire.requset 객체 생성
-        let alamo = AF.request("http://swiftapi.rubypaper.co.kr:2029/practice/echoJSON", method: HTTPMethod.post, parameters: param, encoding: JSONEncoding.default)
+        let alamo = AF.request("http://swiftapi.rubypaper.co.kr:2029/practice/echoJSON", method: HTTPMethod.post, parameters: param, encoding: JSONEncoding.default, headers: header)
         
         // 3. 응답 처리
         alamo.responseJSON { (response) in
-            
+            // alamofire 로 가져온 값이 success일 경우
+            switch response.result {
+            case .success(let successValue):
+                print(successValue)
+                do {
+                    guard let jsonObjects = response.value else { return }
+                    guard let data = jsonObjects as? NSDictionary else { return }
+//                    // JSON 결과값 추출
+                    guard let result = data["result"] as? String else { return }
+                    guard let timeStamp = data["timestamp"] as? String else { return }
+                    guard let userId = data["userId"] as? String else { return }
+                    guard let userName = data["userName"] as? String else { return }
+
+                    // result TextField에 값을 넣어주기
+                    self.resultTextView.text = "아이디 : \(userId)" + "\n"
+                    + "이름 : \(userName)" + "\n"
+                    + "응답결과 : \(result)" + "\n"
+                    + "응답시간 : \(timeStamp)" + "\n"
+                    + "요청방식 : application/json"
+                } catch {
+                    print(error.localizedDescription)
+                }
+            // alamofire 로 가져온 값이 failure일 경우
+            case .failure(let e):
+                print(e.localizedDescription)
+                break
+            }
         }
         
     }
@@ -137,15 +167,15 @@ class ViewController: UIViewController {
     private func setUpResultTextField() {
         let guide = self.view.safeAreaLayoutGuide
         
-        resultTextField.translatesAutoresizingMaskIntoConstraints = false
+        resultTextView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.view.addSubview(resultTextField)
+        self.view.addSubview(resultTextView)
         
         NSLayoutConstraint.activate([
-            resultTextField.topAnchor.constraint(equalTo: postAlamofireButton.bottomAnchor, constant: 30),
-            resultTextField.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 50),
-            resultTextField.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -50),
-            resultTextField.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -100)
+            resultTextView.topAnchor.constraint(equalTo: self.postAlamofireButton.bottomAnchor, constant: 30),
+            resultTextView.centerXAnchor.constraint(equalTo: guide.centerXAnchor),
+            resultTextView.widthAnchor.constraint(equalToConstant: 300),
+            resultTextView.heightAnchor.constraint(equalToConstant: 300),
         ])
     }
 }
